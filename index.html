@@ -1,48 +1,144 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Conquistas do Curso</title>
+<meta charset="UTF-8">
+<title>Ranking Cyberpunk</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      background: #f4f4f4;
-    }
+<style>
+body {
+  font-family: Arial;
+  background: black;
+  color: #00ffff;
+  margin: 0;
+}
 
-    header {
-      background: #222;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+header {
+  text-align: center;
+  padding: 20px;
+  font-size: 28px;
+  background: #0a0a0a;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+}
 
-    section {
-      padding: 20px;
-    }
+.container {
+  padding: 20px;
+}
 
-    .card {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
-  </style>
+select, button {
+  padding: 10px;
+  margin: 5px;
+  background: black;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+}
+
+button:hover {
+  background: #00ffff;
+  color: black;
+  cursor: pointer;
+}
+
+.ranking {
+  margin-top: 20px;
+}
+
+.card {
+  background: #111;
+  padding: 10px;
+  margin: 5px 0;
+  border-left: 4px solid #00ffff;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1>Conquistas do Curso</h1>
-</header>
+<header>⚡ Ranking Cyberpunk ⚡</header>
 
-<section>
-  <div class="card">
-    <h2>João</h2>
-    <p>Conseguiu emprego em TI</p>
-  </div>
-</section>
+<div class="container">
+
+<h3>Registrar Atividade</h3>
+
+<select id="aluno">
+<option>Alice Campos Menim</option>
+<option>Davi Bobo Correia</option>
+<option>Emanuel Geraldo Talarico da Silva</option>
+<option>Enzo</option>
+<option>João Pedro Nicolini de Araújo</option>
+<option>João Vinícius Correia Coelho</option>
+<option>Josiane Aparecida Machado Bezerra</option>
+<option>Júlia Cássia de Souza</option>
+<option>Lorena Rosa Torres</option>
+<option>Lorenzo Gabriel Sakamoto Rabelo</option>
+<option>Maria Gabrielle Mendes de Freitas</option>
+<option>Miguel Campos Menim</option>
+<option>Miguel Heleno Correia Coelho</option>
+<option>Miguel Mariano Ferreira Castineiras</option>
+<option>Mirella de Oliveira Semegini</option>
+<option>Murilo Campos Menim</option>
+<option>Murilo da Silva Vágula</option>
+<option>Nicolas Eduardo da Silva Vágula</option>
+<option>Paquelícia Conceição Guerra</option>
+<option>Pedro Miguel Silva Luzete</option>
+<option>Ricardo Augusto de Oliveira Celestino</option>
+<option>Stephanie Paulina Couto</option>
+</select>
+
+<select id="atividade">
+<option value="1">Atividade 1</option>
+<option value="2">Atividade 2</option>
+<option value="3">Atividade 3</option>
+<option value="4">Atividade 4</option>
+<option value="5">Atividade 5</option>
+<option value="6">Atividade 6</option>
+<option value="7">Atividade 7</option>
+<option value="8">Atividade 8</option>
+<option value="9">Atividade 9</option>
+<option value="10">Atividade 10</option>
+<option value="11">Atividade 11</option>
+<option value="12">Atividade 12</option>
+</select>
+
+<button onclick="registrar()">Registrar (+40 pts)</button>
+
+<div class="ranking" id="ranking"></div>
+
+</div>
+
+<script>
+let pontos = JSON.parse(localStorage.getItem("pontos")) || {};
+
+function registrar() {
+  let aluno = document.getElementById("aluno").value;
+
+  if (!pontos[aluno]) {
+    pontos[aluno] = 0;
+  }
+
+  pontos[aluno] += 40;
+
+  localStorage.setItem("pontos", JSON.stringify(pontos));
+
+  atualizarRanking();
+}
+
+function atualizarRanking() {
+  let ranking = document.getElementById("ranking");
+  ranking.innerHTML = "";
+
+  let lista = Object.entries(pontos).sort((a,b) => b[1] - a[1]);
+
+  lista.forEach((item, index) => {
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<strong>#${index+1} ${item[0]}</strong> - ${item[1]} pontos`;
+    ranking.appendChild(div);
+  });
+}
+
+atualizarRanking();
+</script>
 
 </body>
 </html>
