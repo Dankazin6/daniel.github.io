@@ -7,7 +7,7 @@
 <style>
 body {
   font-family: Arial;
-  background: black;
+  background: #050510;
   color: #00ffff;
   margin: 0;
 }
@@ -17,7 +17,6 @@ header {
   padding: 20px;
   font-size: 28px;
   background: #0a0a0a;
-  color: #00ffff;
   text-shadow: 0 0 10px #00ffff;
 }
 
@@ -39,10 +38,6 @@ button:hover {
   cursor: pointer;
 }
 
-.ranking {
-  margin-top: 20px;
-}
-
 .card {
   background: #111;
   padding: 10px;
@@ -60,80 +55,103 @@ button:hover {
 
 <h3>Registrar Atividade</h3>
 
-<select id="aluno">
-<option>Alice Campos Menim</option>
-<option>Davi Bobo Correia</option>
-<option>Emanuel Geraldo Talarico da Silva</option>
-<option>Enzo</option>
-<option>João Pedro Nicolini de Araújo</option>
-<option>João Vinícius Correia Coelho</option>
-<option>Josiane Aparecida Machado Bezerra</option>
-<option>Júlia Cássia de Souza</option>
-<option>Lorena Rosa Torres</option>
-<option>Lorenzo Gabriel Sakamoto Rabelo</option>
-<option>Maria Gabrielle Mendes de Freitas</option>
-<option>Miguel Campos Menim</option>
-<option>Miguel Heleno Correia Coelho</option>
-<option>Miguel Mariano Ferreira Castineiras</option>
-<option>Mirella de Oliveira Semegini</option>
-<option>Murilo Campos Menim</option>
-<option>Murilo da Silva Vágula</option>
-<option>Nicolas Eduardo da Silva Vágula</option>
-<option>Paquelícia Conceição Guerra</option>
-<option>Pedro Miguel Silva Luzete</option>
-<option>Ricardo Augusto de Oliveira Celestino</option>
-<option>Stephanie Paulina Couto</option>
-</select>
+<select id="aluno"></select>
 
-<select id="atividade">
-<option value="1">Atividade 1</option>
-<option value="2">Atividade 2</option>
-<option value="3">Atividade 3</option>
-<option value="4">Atividade 4</option>
-<option value="5">Atividade 5</option>
-<option value="6">Atividade 6</option>
-<option value="7">Atividade 7</option>
-<option value="8">Atividade 8</option>
-<option value="9">Atividade 9</option>
-<option value="10">Atividade 10</option>
-<option value="11">Atividade 11</option>
-<option value="12">Atividade 12</option>
-</select>
+<select id="atividade"></select>
 
-<button onclick="registrar()">Registrar (+40 pts)</button>
+<br>
 
-<div class="ranking" id="ranking"></div>
+<button onclick="adicionar()">+40 pontos</button>
+<button onclick="remover()">-40 pontos</button>
+
+<div id="ranking"></div>
 
 </div>
 
 <script>
+const alunos = [
+"Alice Campos Menim","Davi Bobo Correia","Emanuel Geraldo Talarico da Silva","Enzo",
+"João Pedro Nicolini de Araújo","João Vinícius Correia Coelho","Josiane Aparecida Machado Bezerra",
+"Júlia Cássia de Souza","Lorena Rosa Torres","Lorenzo Gabriel Sakamoto Rabelo",
+"Maria Gabrielle Mendes de Freitas","Miguel Campos Menim","Miguel Heleno Correia Coelho",
+"Miguel Mariano Ferreira Castineiras","Mirella de Oliveira Semegini","Murilo Campos Menim",
+"Murilo da Silva Vágula","Nicolas Eduardo da Silva Vágula","Paquelícia Conceição Guerra",
+"Pedro Miguel Silva Luzete","Ricardo Augusto de Oliveira Celestino","Stephanie Paulina Couto"
+];
+
+const atividades = [
+"Atividade 1 - Lógica Básica",
+"Atividade 2 - Digitação",
+"Atividade 3 - Internet",
+"Atividade 4 - Segurança",
+"Atividade 5 - Word",
+"Atividade 6 - Excel",
+"Atividade 7 - PowerPoint",
+"Atividade 8 - Hardware",
+"Atividade 9 - Sistemas",
+"Atividade 10 - Redes",
+"Atividade 11 - Programação",
+"Atividade 12 - Projeto Final"
+];
+
 let pontos = JSON.parse(localStorage.getItem("pontos")) || {};
 
-function registrar() {
-  let aluno = document.getElementById("aluno").value;
+const selectAluno = document.getElementById("aluno");
+const selectAtividade = document.getElementById("atividade");
 
-  if (!pontos[aluno]) {
-    pontos[aluno] = 0;
-  }
+// preencher alunos
+alunos.forEach(a => {
+  let opt = document.createElement("option");
+  opt.value = a;
+  opt.textContent = a;
+  selectAluno.appendChild(opt);
+});
+
+// preencher atividades
+atividades.forEach(a => {
+  let opt = document.createElement("option");
+  opt.value = a;
+  opt.textContent = a;
+  selectAtividade.appendChild(opt);
+});
+
+function adicionar() {
+  let aluno = selectAluno.value;
+
+  if (!pontos[aluno]) pontos[aluno] = 0;
 
   pontos[aluno] += 40;
+  salvar();
+}
 
+function remover() {
+  let aluno = selectAluno.value;
+
+  if (!pontos[aluno]) return;
+
+  pontos[aluno] -= 40;
+
+  if (pontos[aluno] < 0) pontos[aluno] = 0;
+
+  salvar();
+}
+
+function salvar() {
   localStorage.setItem("pontos", JSON.stringify(pontos));
-
   atualizarRanking();
 }
 
 function atualizarRanking() {
-  let ranking = document.getElementById("ranking");
-  ranking.innerHTML = "";
+  let div = document.getElementById("ranking");
+  div.innerHTML = "";
 
-  let lista = Object.entries(pontos).sort((a,b) => b[1] - a[1]);
+  let lista = Object.entries(pontos).sort((a,b) => b[1]-a[1]);
 
-  lista.forEach((item, index) => {
-    let div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>#${index+1} ${item[0]}</strong> - ${item[1]} pontos`;
-    ranking.appendChild(div);
+  lista.forEach((item, i) => {
+    let el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `#${i+1} ${item[0]} - ${item[1]} pts`;
+    div.appendChild(el);
   });
 }
 
